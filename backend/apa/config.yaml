@@ -1,0 +1,2 @@
+parser_model: "dpt-2-mini"
+extractor_model: "extract-latest"
