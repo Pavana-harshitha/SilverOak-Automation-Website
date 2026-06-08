@@ -129,9 +129,12 @@ def apa(request:ProcessRequest):
 
         form_number = extraction["form_number"] 
         form_name = extraction["form_name"] 
+        
+        request.content=""
 
         response = {
             "document_responses":{
+                "request":request.model_dump(),
                 "results":{
                     "full_name" : str(full_name),
                     "contact_number" : str(contact_number), 
