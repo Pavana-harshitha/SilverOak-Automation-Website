@@ -1,0 +1,152 @@
+{
+    "type": "object",
+    "properties": {
+        "policyholder_information": {
+        "type": "object",
+        "description": "Contains policy holder information",
+        "properties": {
+            "full_name": {
+            "type": "string"
+            },
+            "contact_number": {
+            "type": "string"
+            },
+            "street_address": {
+            "type": "string"
+            },
+            "city": {
+            "type": "string"
+            },
+            "state": {
+            "type": "string"
+            },
+            "postal_code": {
+            "type": "string"
+            },
+            "email_address": {
+            "type": "string"
+            }
+        }
+        },
+        "request_type": {
+        "type": "string",
+        "description": "Action being requested by the policy holder",
+        "enum": [
+            "start",
+            "add",
+            "cancel",
+            "update",
+            "replace"
+        ]
+        },
+        "covered_policy_information": {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+            "policy_number": {
+                "type": "string"
+            },
+            "vehicle": {
+                "type": "boolean"
+            },
+            "property": {
+                "type": "boolean"
+            },
+            "health": {
+                "type": "boolean"
+            },
+            "life": {
+                "type": "boolean"
+            }
+            }
+        }
+        },
+        "bank_payment_information": {
+        "type": "object",
+        "properties": {
+            "account_type": {
+            "type": "string",
+            "enum": [
+                "checking",
+                "savings"
+            ]
+            },
+            "name_on_bank_account": {
+            "type": "string"
+            },
+            "bank_name": {
+            "type": "string"
+            },
+            "": {
+            "type": "string"
+            },
+            "bank_routing_number": {
+            "type": "number"
+            },
+            "last_4_digits_on_bank_account": {
+            "type": "number"
+            }
+        }
+        },
+        "preferred_payment_date": {
+        "type": "number"
+        },
+        "payment_frequency": {
+        "type": "string",
+        "enum": [
+            "pay_in_full",
+            "monthly",
+            "quaterly",
+            "twice_per_month"
+        ]
+        },
+        "signature_details": {
+        "type": "object",
+        "properties": {
+            "has_signature": {
+            "type": "boolean"
+            },
+            "has_date": {
+            "type": "boolean"
+            }
+        }
+        },
+        "card_payment_information": {
+        "type": "object",
+        "properties": {
+            "card_type": {
+            "type": "string",
+            "enum": [
+                "visa",
+                "master_card",
+                "discover",
+                "amex"
+            ]
+            },
+            "name_on_card": {
+            "type": "string"
+            },
+            "billing_address": {
+            "type": "string"
+            },
+            "expiration_date": {
+            "type": "string",
+            "format": "MM-YYYY"
+            },
+            "": {
+            "type": "string"
+            },
+            "last_4_digits_of_card": {
+            "type": "number"
+            }
+        }
+        },
+        "form_number": {
+        "type": "string"
+        },
+        "form_name": {
+        "type": "string"
+        }
+    }
+    }
