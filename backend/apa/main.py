@@ -7,12 +7,21 @@ import base64
 from pathlib import Path
 from landingai_ade import LandingAIADE
 import helper
+from supabase import create_client
 
 
 load_dotenv()
-LANDING_AI_API_KEY=os.getenv("LANDING_AI_API_KEY")
+LANDING_AI_API_KEY = os.getenv("LANDING_AI_API_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+supabase_client = create_client(SUPABASE_URL,SUPABASE_SERVICE_KEY)
 
 app=FastAPI()
+
+class CreateRequest(BaseModel):
+    name: str
+    process_name: str
+    process_code: str
 
 class ProcessRequest(BaseModel):
     process_name: str
@@ -21,9 +30,29 @@ class ProcessRequest(BaseModel):
     content: str
     id: str
 
+
 @app.get('/test')
 def test():
     return ({"message":"API is running"})
+
+
+@app.post('/record')
+def create_record(request:CreateRequest):
+    try:
+        record = {
+                "filename":request.name,
+                "process_name":request.process_name,
+                "process_code":request.process_code
+                }
+        
+        response = supabase_client.table("autopay_bank_card_forms").insert(record).execute()
+        return {"message":"Record created",
+                "record":response.data[0]}
+    
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500,detail=str(e))
+    
 
 
 @app.post('/process')
