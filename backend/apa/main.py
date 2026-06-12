@@ -8,6 +8,8 @@ from pathlib import Path
 from landingai_ade import LandingAIADE
 import helper
 from supabase import create_client
+from typing import Literal,Dict,Any
+from datetime import datetime, timezone
 
 
 load_dotenv()
@@ -23,13 +25,17 @@ class CreateRequest(BaseModel):
     process_name: str
     process_code: str
 
+class UpdateRequest(BaseModel):
+    status: Literal["Pending", "Success", "Failure"]
+    response: Dict[str, Any] | None = None
+    error: str | None = None
+
 class ProcessRequest(BaseModel):
     process_name: str
     process_code: str
     name: str
     content: str
     id: str
-
 
 @app.get('/test')
 def test():
@@ -54,6 +60,25 @@ def create_record(request:CreateRequest):
         raise HTTPException(status_code=500,detail=str(e))
     
 
+@app.patch('/record/(record_id)')
+def update_record(record_id,request:UpdateRequest):
+    try:
+        record = {
+            "status" : request.status,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        if request.response is not None:
+            record["response"] = request.response
+        if request.error is not None:
+            record["error"] = request.error
+        
+        response = supabase_client.table("autopay_bank_card_forms").update(record).eq("id",record_id).execute()
+        return {"message":"Record updated",
+                "record":response.data[0]}    
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500,detail=str(e))
 
 @app.post('/process')
 def apa(request:ProcessRequest):  
