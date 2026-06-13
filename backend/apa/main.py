@@ -41,6 +41,15 @@ class ProcessRequest(BaseModel):
 def test():
     return ({"message":"API is running"})
 
+@app.get('/records')
+def get_records():
+    response = supabase_client.table("autopay_bank_card_forms").select("*").order("created_at",desc=True).execute()
+    return response.data
+
+@app.get('/records/(record_id)')
+def get_record(record_id):
+    response = supabase_client.table("autopay_bank_card_forms").select("*").eq("id",record_id).execute()
+    return response.data[0]
 
 @app.post('/record')
 def create_record(request:CreateRequest):
@@ -79,6 +88,8 @@ def update_record(record_id,request:UpdateRequest):
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500,detail=str(e))
+    
+
 
 @app.post('/process')
 def apa(request:ProcessRequest):  
