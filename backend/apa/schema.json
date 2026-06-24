@@ -1,152 +1,341 @@
 {
-    "type": "object",
-    "properties": {
-        "policyholder_information": {
-        "type": "object",
-        "description": "Contains policy holder information",
-        "properties": {
-            "full_name": {
-            "type": "string"
+  "type": "object",
+  "properties": {
+    "policyholder_information": {
+      "description": "Details about the policyholder authorizing the payment from Section 1.",
+      "type": "object",
+      "properties": {
+        "full_name": {
+          "description": "The full name of the policyholder.",
+          "anyOf": [
+            {
+              "type": "string"
             },
-            "contact_number": {
-            "type": "string"
-            },
-            "street_address": {
-            "type": "string"
-            },
-            "city": {
-            "type": "string"
-            },
-            "state": {
-            "type": "string"
-            },
-            "postal_code": {
-            "type": "string"
-            },
-            "email_address": {
-            "type": "string"
+            {
+              "type": "null"
             }
+          ]
+        },
+        "contact_number": {
+          "description": "The primary contact number for the policyholder.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "street_address": {
+          "description": "The street address of the policyholder.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "city": {
+          "description": "The city of the policyholder's address.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "description": "The state of the policyholder's address (e.g., LA, NY).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "postal_code": {
+          "description": "The postal code of the policyholder's address.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "email_address": {
+          "description": "The email address of the policyholder.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
-        },
-        "request_type": {
-        "type": "string",
-        "description": "Action being requested by the policy holder",
-        "enum": [
-            "start",
-            "add",
-            "cancel",
-            "update",
-            "replace"
-        ]
-        },
-        "covered_policy_information": {
-        "type": "array",
-        "items": {
-            "type": "object",
-            "properties": {
-            "policy_number": {
+      },
+      "required": [
+        "full_name",
+        "contact_number",
+        "street_address",
+        "city",
+        "state",
+        "postal_code",
+        "email_address"
+      ],
+      "additionalProperties": false
+    },
+    "request_type": {
+      "description": "The action being requested by the policy holder in Section 2.",
+      "type": "string",
+      "enum": [
+        "start",
+        "add",
+        "cancel",
+        "update",
+        "replace"
+      ]
+    },
+    "covered_policy_information": {
+      "description": "A list of policies to be enrolled in or affected by the automatic payment setup from Section 3.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "policy_number": {
+            "description": "The unique identifier for the insurance policy.",
+            "anyOf": [
+              {
                 "type": "string"
-            },
-            "vehicle": {
-                "type": "boolean"
-            },
-            "property": {
-                "type": "boolean"
-            },
-            "health": {
-                "type": "boolean"
-            },
-            "life": {
-                "type": "boolean"
-            }
-            }
-        }
-        },
-        "bank_payment_information": {
-        "type": "object",
-        "properties": {
-            "account_type": {
-            "type": "string",
-            "enum": [
-                "checking",
-                "savings"
+              },
+              {
+                "type": "null"
+              }
             ]
-            },
-            "name_on_bank_account": {
-            "type": "string"
-            },
-            "bank_name": {
-            "type": "string"
-            },
-            "": {
-            "type": "string"
-            },
-            "bank_routing_number": {
-            "type": "number"
-            },
-            "last_4_digits_on_bank_account": {
-            "type": "number"
-            }
-        }
-        },
-        "preferred_payment_date": {
-        "type": "number"
-        },
-        "payment_frequency": {
-        "type": "string",
-        "enum": [
-            "pay_in_full",
-            "monthly",
-            "quaterly",
-            "twice_per_month"
-        ]
-        },
-        "signature_details": {
-        "type": "object",
-        "properties": {
-            "has_signature": {
+          },
+          "vehicle": {
+            "description": "Indicates if this policy covers a vehicle.",
             "type": "boolean"
-            },
-            "has_date": {
+          },
+          "property": {
+            "description": "Indicates if this policy covers property.",
             "type": "boolean"
+          },
+          "health": {
+            "description": "Indicates if this policy covers health.",
+            "type": "boolean"
+          },
+          "life": {
+            "description": "Indicates if this policy covers life.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "policy_number",
+          "vehicle",
+          "property",
+          "health",
+          "life"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "bank_payment_information": {
+      "description": "Details for bank account payments from Section 4.",
+      "type": "object",
+      "properties": {
+        "account_type": {
+          "description": "The type of bank account.",
+          "type": "string",
+          "enum": [
+            "checking",
+            "savings"
+          ]
+        },
+        "name_on_bank_account": {
+          "description": "The name of the account holder as it appears on the bank account.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
             }
-        }
+          ]
         },
-        "card_payment_information": {
-        "type": "object",
-        "properties": {
-            "card_type": {
-            "type": "string",
-            "enum": [
-                "visa",
-                "master_card",
-                "discover",
-                "amex"
-            ]
+        "bank_name": {
+          "description": "The name of the bank.",
+          "anyOf": [
+            {
+              "type": "string"
             },
-            "name_on_card": {
-            "type": "string"
-            },
-            "billing_address": {
-            "type": "string"
-            },
-            "expiration_date": {
-            "type": "string",
-            "format": "MM-YYYY"
-            },
-            "": {
-            "type": "string"
-            },
-            "last_4_digits_of_card": {
-            "type": "number"
+            {
+              "type": "null"
             }
-        }
+          ]
         },
-        "form_number": {
-        "type": "string"
+        "bank_routing_number": {
+          "description": "The bank routing number (typically 9 digits).",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
-        "form_name": {
-        "type": "string"
+        "last_4_digits_on_bank_account": {
+          "description": "The last 4 digits of the bank account number.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
+      },
+      "required": [
+        "account_type",
+        "name_on_bank_account",
+        "bank_name",
+        "bank_routing_number",
+        "last_4_digits_on_bank_account"
+      ],
+      "additionalProperties": false
+    },
+    "preferred_payment_date": {
+      "description": "The preferred day of the month for payments to be processed (1-31).",
+      "type": "number"
+    },
+    "payment_frequency": {
+      "description": "How often payments are made.",
+      "type": "string",
+      "enum": [
+        "pay_in_full",
+        "monthly",
+        "quarterly",
+        "twice_per_month"
+      ]
+    },
+    "signature_details": {
+      "description": "Information about the policyholder's signature and date from Section 5.",
+      "type": "object",
+      "properties": {
+        "has_signature": {
+          "description": "Indicates whether signature is present or not.",
+          "type": "boolean"
+        },
+        "has_date": {
+          "description": "Indicates whether signature date is present or not.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "has_signature",
+        "has_date"
+      ],
+      "additionalProperties": false
+    },
+    "card_payment_information": {
+      "description": "Details for credit or debit card payments from Section 4.",
+      "type": "object",
+      "properties": {
+        "card_type": {
+          "description": "The type of payment card.",
+          "type": "string",
+          "enum": [
+            "visa",
+            "master_card",
+            "discover",
+            "amex"
+          ]
+        },
+        "name_on_card": {
+          "description": "The name of the cardholder as it appears on the card.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "billing_address": {
+          "description": "The billing address associated with the card.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expiration_date": {
+          "description": "The expiration date of the card. Format: MM-YYYY.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "last_4_digits_of_card": {
+          "description": "The last 4 digits of the card number.",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "card_type",
+        "name_on_card",
+        "billing_address",
+        "expiration_date",
+        "last_4_digits_of_card"
+      ],
+      "additionalProperties": false
+    },
+    "form_number": {
+      "description": "The unique identifier or number of the form.Found at the bottom right corner of the page",
+      "type": "string"
+    },
+    "form_name": {
+      "description": "The descriptive name or title of the form.",
+      "type": "string"
     }
-    }
+  },
+  "required": [
+    "policyholder_information",
+    "request_type",
+    "covered_policy_information",
+    "bank_payment_information",
+    "preferred_payment_date",
+    "payment_frequency",
+    "signature_details",
+    "card_payment_information",
+    "form_number",
+    "form_name"
+  ],
+  "additionalProperties": false
+}
