@@ -32,10 +32,10 @@ def apa(request:ProcessRequest):
     try:  
         with open("config.yaml", "r") as f:
             config = yaml.safe_load(f)
-        parser_model=config["parser_model"]
-        extractor_model=config["extractor_model"]
-        print(f"parser_model - {parser_model}")
-        print(f"extractor_model - {extractor_model}")
+        parse_tier=config["parse_tier"]
+        extract_tier=config["extract_tier"]
+        print(f"parse_tier - {parse_tier}")
+        print(f"extract_tier - {extract_tier}")
 
         process_name = request.process_name
         process_code = request.process_code
@@ -69,9 +69,9 @@ def apa(request:ProcessRequest):
             file_input=file_obj.id,
             configuration={
                 "data_schema": schema,
-                "tier": "cost_effective",
+                "tier": extract_tier,
                 "extraction_target": "per_doc",
-                "parse_tier": "cost_effective",
+                "parse_tier": parse_tier,
                 "cite_sources": False,
                 "confidence_scores": True
             },

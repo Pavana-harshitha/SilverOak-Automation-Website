@@ -1,2 +1,2 @@
-parser_model: "dpt-2-mini"
-extractor_model: "extract-latest"
+parse_tier: "cost_effective"
+extract_tier: "cost_effective"
