@@ -1,16 +1,16 @@
-import os
+import os,time,json
 from dotenv import load_dotenv
 from pydantic import BaseModel
 import yaml
 from fastapi import HTTPException,APIRouter
 import base64
 from pathlib import Path
-from landingai_ade import LandingAIADE
+from llama_cloud import LlamaCloud
 import helper
 
 
 load_dotenv()
-LANDING_AI_API_KEY = os.getenv("LANDING_AI_API_KEY")
+LLAMA_AI_API_KEY = os.getenv("LLAMA_AI_API_KEY")
 
 router=APIRouter(tags=["apa"])
 
@@ -55,27 +55,38 @@ def apa(request:ProcessRequest):
         with open(modified_file_name, "wb") as pdf_file:
             pdf_file.write(pdf_bytes)
 
+
         with open("schema.json", "r") as f:
-            schema = f.read()
+            schema = json.load(f)
 
-        client = LandingAIADE(
-        apikey=LANDING_AI_API_KEY,
+        client = LlamaCloud(
+        api_key=LLAMA_AI_API_KEY,
         )
 
-        parse_response = client.parse(
-        document=modified_file_name,
-        model=parser_model,
+        file_obj = client.files.create(file = modified_file_name, purpose = "extract")
+
+        job = client.extract.create(
+            file_input=file_obj.id,
+            configuration={
+                "data_schema": schema,
+                "tier": "cost_effective",
+                "extraction_target": "per_doc",
+                "parse_tier": "cost_effective",
+                "cite_sources": False,
+                "confidence_scores": True
+            },
         )
 
-        raw_extract_response = client.extract(
-        schema=schema,
-        markdown=parse_response.markdown.encode('utf-8'),
-        model=extractor_model
-        )
+        while job.status not in ("COMPLETED", "FAILED", "CANCELLED"):
+            time.sleep(2)
+            job = client.extract.get(job.id)
 
-        extraction = raw_extract_response.to_dict().get("extraction",{})
+        if job.status != "COMPLETED":
+            raise RuntimeError(f"Extract job {job.id} ended in {job.status}: {job.error_message}")
+
+        extraction = job.to_dict().get("extract_result",{})
         print(extraction)
-
+        
 
         full_name = contact_number = street_address = city = state = postal_code = email_address = None
         

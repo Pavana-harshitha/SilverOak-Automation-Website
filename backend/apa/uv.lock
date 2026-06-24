@@ -38,7 +38,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "landingai-ade" },
+    { name = "llama-cloud" },
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "pyyaml" },
@@ -50,7 +50,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.136.3" },
-    { name = "landingai-ade", specifier = ">=1.12.0" },
+    { name = "llama-cloud", specifier = ">=2.9.0" },
     { name = "pydantic", specifier = ">=2.13.4" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "pyyaml", specifier = ">=6.0.3" },
@@ -364,8 +364,8 @@ wheels = [
 ]
 
 [[package]]
-name = "landingai-ade"
-version = "1.12.0"
+name = "llama-cloud"
+version = "2.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -375,9 +375,9 @@ dependencies = [
     { name = "sniffio" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/58/8b/fba829b86d62b2f4b8b48a60dda0206acf664779604a5ce0b64d90b83b8d/landingai_ade-1.12.0.tar.gz", hash = "sha256:c8ba80d062d934c03a26c5ef6bb1d8c0f5dd9f0aa11d88d802bf9e931476949b", size = 131460, upload-time = "2026-04-23T16:34:07.042Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/97/64deb83317be6c24eaeda90f6179551a7ed9cfdf4032dd4e45a55855c6cf/llama_cloud-2.9.0.tar.gz", hash = "sha256:c8d455c3655d7a59299f737b9668721294468bbe8b3f22f7a40b1b175ea851c5", size = 3556878, upload-time = "2026-06-09T19:38:04.133Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/54/76/24b21714157f23191100b9331348d3c42be737d6b1993a80701fcb0a930d/landingai_ade-1.12.0-py3-none-any.whl", hash = "sha256:fe75d98faea41e0ebbaaf133611f82a667134ef421d95afcbb8eea075f4dc3e0", size = 103261, upload-time = "2026-04-23T16:34:05.645Z" },
+    { url = "https://files.pythonhosted.org/packages/af/9c/9ed280e1ddd36f59c20eb2b2e2b382ec26ebc5b0608bc104c8e99445c057/llama_cloud-2.9.0-py3-none-any.whl", hash = "sha256:b2ef196758197243d5810aa84f0d574a4cd59d616f20565b34de3c81a6069531", size = 459068, upload-time = "2026-06-09T19:38:02.821Z" },
 ]
 
 [[package]]
