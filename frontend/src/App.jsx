@@ -1,6 +1,7 @@
 // App.jsx
-import Home from "./pages/Home"
+import Dashboard from "./pages/Dashboard"
 import Results from "./pages/Results"
+import Upload from "./pages/Upload"
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import Layout from "./Layout";
 
@@ -9,7 +10,8 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path="/" element={<Layout/>}>
-        <Route index element={<Home/>}/>
+        <Route index element={<Dashboard/>}/>
+        <Route path="upload" element={<Upload/>}/>
         <Route path="results" element={<Results/>}/>
       </Route>
     </Routes>
