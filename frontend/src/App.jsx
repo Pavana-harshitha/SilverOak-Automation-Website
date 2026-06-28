@@ -1,4 +1,3 @@
-import React from 'react'
 import Dashboard from "./pages/Dashboard"
 import Results from "./pages/Results"
 import Upload from "./pages/Upload"
@@ -11,8 +10,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Layout/>}>
             <Route index element={<Dashboard />} />
-            <Route path="/Upload" element={<Upload />} />
-            <Route path="/Results" element={<Results />} />
+            <Route path="upload" element={<Upload />} />
+            <Route path="results" element={<Results />} />
         </Route>
       </Routes>
     </BrowserRouter>
