@@ -1,16 +1,32 @@
 import React, { useState } from "react";
 
 import DropdownField from "../components/upload/DropdownField";
+import PrioritySelector from "../components/upload/PrioritySelector";
+import FileUpload from "../components/upload/FileUpload";
 
-import formTypes from "../data/formTypes";
-import priorities from "../data/priorities";
 
+import documentCategories from "../data/documentCategories";
+import documentTypes from "../data/documentTypes";
+import sourceSystems from "../data/sourceSystems";
 
 export default function Upload() {
 
-  const [selectedFormType, setSelectedFormType] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [selectedSource, setSelectedSource] = useState("");
   const [selectedPriority, setSelectedPriority] = useState("");
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    setSelectedType("");
+  };
+
+  const handleReset = () => {
+    setSelectedCategory("");
+    setSelectedType("");
+    setSelectedSource("");
+    setSelectedPriority("");
+  };
 
   return (
     <div className="upload-page">
@@ -18,20 +34,39 @@ export default function Upload() {
       <h1>Upload</h1>
 
       <DropdownField
-        label="Form Type"
-        value={selectedFormType}
-        options={formTypes}
-        onChanged={setSelectedFormType}
+        label="Document Category"
+        value={selectedCategory}
+        options={documentCategories}
+        onChanged={handleCategoryChange}
       />
 
       <DropdownField
-        label="Priorities"
-        value={selectedPriority}
-        options={priorities}
-        onChanged={setSelectedPriority}
+        label="Document Type"
+        value={selectedType}
+        options={
+          selectedCategory
+            ? documentTypes[selectedCategory]
+            : []
+        }
+        onChanged={setSelectedType}
       />
 
-      
+      <DropdownField
+        label="Source System"
+        value={selectedSource}
+        options={sourceSystems}
+        onChanged={setSelectedSource}
+      />
+
+      <PrioritySelector
+        value={selectedPriority}
+        onChange={setSelectedPriority}
+      />
+
+      <FileUpload />
+      <button onClick={handleReset}>
+        Reset
+      </button>
 
     </div>
   );
