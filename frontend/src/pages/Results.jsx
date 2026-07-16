@@ -1,10 +1,11 @@
-import React from 'react'
+function Results() {
+    return (
+        <>
+            <h1>Results</h1>
 
-export default function Results() {
-  return (
-    
-    <div>
-      <h1>Results Page</h1>
-    </div>
-  );
+            <p>Results page coming soon.</p>
+        </>
+    );
 }
+
+export default Results;

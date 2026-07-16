@@ -1,27 +1,31 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 import "./Navbar.css";
-import { FaTachometerAlt, FaUpload, FaFileAlt } from "react-icons/fa";
 
+function Navbar() {
+    return (
+        <aside className="sidebar">
 
-export default function Navbar() {
-  return (
-    <nav className="sidebar">
-      <h2>SilverOAK Automation</h2>
+            <h2>SilverOAK</h2>
 
-      <div className="nav-links">
-        <Link to="/">
-        <FaTachometerAlt />
-          Dashboard
-        </Link>
-        <Link to="/upload">
-        <FaUpload/>
-        Upload
-        </Link>
-        <Link to="/results">
-        <FaFileAlt/>
-        Results
-        </Link>
-      </div>
-    </nav>
-  );
+            <nav>
+
+                <NavLink to="/dashboard">
+                    Dashboard
+                </NavLink>
+
+                <NavLink to="/upload">
+                    Upload
+                </NavLink>
+
+                <NavLink to="/results">
+                    Results
+                </NavLink>
+
+            </nav>
+
+        </aside>
+    );
 }
+
+export default Navbar;
