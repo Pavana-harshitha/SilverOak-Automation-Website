@@ -4,6 +4,7 @@ import SummaryCard from "../components/dashboard/SummaryCard";
 import "./Dashboard.css";
 import StatusPieChart from "../components/dashboard/StatusPieChart";
 import RequestTrendChart from "../components/dashboard/RequestTrendChart";
+import RecentActivity from "../components/dashboard/RecentActivity";
 
 function Dashboard() {
     const [records, setRecords] = useState([]);
@@ -68,13 +69,21 @@ function Dashboard() {
             <SummaryCard title="Failed" count={failed} />
         </div>
 
+        <div className="chart-container">
+
         <StatusPieChart
             success={success}
             pending={pending}
             failed={failed}
         />
 
-        <RequestTrendChart records={records} />
+        <RequestTrendChart
+            records={records}
+        />
+
+        </div>
+
+        <RecentActivity records={records} />
 
     </div>
     );
