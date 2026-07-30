@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { API } from "../api/api";
+import SummaryCard from "../components/dashboard/SummaryCard";
+import "./Dashboard.css";
 
 function Dashboard() {
     const [records, setRecords] = useState([]);
@@ -38,11 +40,30 @@ function Dashboard() {
         return <h2>{error}</h2>;
     }
 
+    const total = records.length;
+
+    const success = records.filter(
+        (record) => record.status === "Success"
+    ).length;
+
+    const pending = records.filter(
+        (record) => record.status === "Pending"
+    ).length;
+
+    const failed = records.filter(
+        (record) => record.status === "Failure"
+    ).length;
+
     return (
-        <div>
+        <div className="dashboard">
             <h1>Dashboard</h1>
 
-            <p>Total Records: {records.length}</p>
+            <div className="summary-container">
+                <SummaryCard title="Total Documents" count={total} />
+                <SummaryCard title="Success" count={success} />
+                <SummaryCard title="Pending" count={pending} />
+                <SummaryCard title="Failed" count={failed} />
+            </div>
         </div>
     );
 }
