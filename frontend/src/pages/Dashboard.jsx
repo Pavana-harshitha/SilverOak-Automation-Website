@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API } from "../api/api";
 import SummaryCard from "../components/dashboard/SummaryCard";
 import "./Dashboard.css";
+import StatusPieChart from "../components/dashboard/StatusPieChart";
 
 function Dashboard() {
     const [records, setRecords] = useState([]);
@@ -55,16 +56,24 @@ function Dashboard() {
     ).length;
 
     return (
-        <div className="dashboard">
-            <h1>Dashboard</h1>
+    <div>
 
-            <div className="summary-container">
-                <SummaryCard title="Total Documents" count={total} />
-                <SummaryCard title="Success" count={success} />
-                <SummaryCard title="Pending" count={pending} />
-                <SummaryCard title="Failed" count={failed} />
-            </div>
+        <h1>Dashboard</h1>
+
+        <div className="summary-container">
+            <SummaryCard title="Total Documents" count={total} />
+            <SummaryCard title="Success" count={success} />
+            <SummaryCard title="Pending" count={pending} />
+            <SummaryCard title="Failed" count={failed} />
         </div>
+
+        <StatusPieChart
+            success={success}
+            pending={pending}
+            failed={failed}
+        />
+
+    </div>
     );
 }
 
