@@ -3,6 +3,7 @@ import { API } from "../api/api";
 import SummaryCard from "../components/dashboard/SummaryCard";
 import "./Dashboard.css";
 import StatusPieChart from "../components/dashboard/StatusPieChart";
+import RequestTrendChart from "../components/dashboard/RequestTrendChart";
 
 function Dashboard() {
     const [records, setRecords] = useState([]);
@@ -72,6 +73,8 @@ function Dashboard() {
             pending={pending}
             failed={failed}
         />
+
+        <RequestTrendChart records={records} />
 
     </div>
     );
