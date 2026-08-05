@@ -5,6 +5,8 @@ import sourceSystems from "../data/sourceSystems";
 import priorities from "../data/priorities";
 
 import "./Upload.css";
+import processMappings from "../data/processMappings";
+import { createRecord } from "../api/api";
 
 function Upload() {
     const [category, setCategory] = useState("");
@@ -12,6 +14,11 @@ function Upload() {
     const [source, setSource] = useState("");
     const [priority, setPriority] = useState("");
     const [file, setFile] = useState(null);
+
+    const [recordId, setRecordId] = useState(null);
+    const [isCreatingRecord, setIsCreatingRecord] = useState(false);
+    const [recordError, setRecordError] = useState("");
+
     const [fileError, setFileError] = useState("");
    
     const fileInputRef = useRef(null);
@@ -30,6 +37,55 @@ function Upload() {
 
         setFile(selectedFile);
     } 
+
+    async function handleCreateRecord() {
+        setRecordError("");
+        setRecordId(null);
+
+        if (!category || !type || !file) {
+            setRecordError(
+                "Please select a document category, document type, and PDF file."
+            );
+            return;
+        }
+
+        const processDetails = processMappings[category]?.[type];
+
+        if (!processDetails) {
+            setRecordError(
+                "No process mapping was found for the selected document."
+            );
+            return;
+        }
+
+        const requestBody = {
+            name: file.name,
+            process_name: processDetails.processName,
+            process_code: processDetails.processCode,
+        };
+
+        try {
+            setIsCreatingRecord(true);
+
+            const createdRecord = await createRecord(requestBody);
+
+            const returnedRecordId = createdRecord?.record?.id;
+
+            if (!returnedRecordId) {
+                throw new Error(
+                    "The record was created, but the response did not contain a record ID."
+                );
+            }
+
+            setRecordId(returnedRecordId);
+        } catch (error) {
+            setRecordError(
+                error.message || "Something went wrong while creating the record."
+            );
+        } finally {
+            setIsCreatingRecord(false);
+        }
+    }
 
     function handleRemoveFile() {
         setFile(null);
@@ -169,9 +225,26 @@ function Upload() {
                 <div className="form-group">
                     <label>&nbsp;</label>
 
-                    <button className="upload-btn">
-                        Upload
+                    <button
+                        type="button"
+                        className="upload-btn"
+                        onClick={handleCreateRecord}
+                        disabled={isCreatingRecord}
+                    >
+                        {isCreatingRecord ? "Creating Record..." : "Upload"}
                     </button>
+                    
+                    {recordId && (
+                        <p className="record-success">
+                            Record created successfully. Record ID: {recordId}
+                        </p>
+                    )}
+
+                    {recordError && (
+                        <p className="record-error">
+                            {recordError}
+                        </p>
+                    )}
                 </div>
 
             </div>

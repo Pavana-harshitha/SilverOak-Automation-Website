@@ -90,3 +90,29 @@
 .page-header p{
     color:#666;
 }
+
+.upload-btn:disabled {
+    background: #93b4f5;
+    cursor: not-allowed;
+}
+
+.record-success,
+.record-error {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.record-success {
+    color: #166534;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+
+.record-error {
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
