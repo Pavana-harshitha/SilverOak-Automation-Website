@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useRef, useState } from "react";
 import documentCategories from "../data/documentCategories";
 import documentTypes from "../data/documentTypes";
 import sourceSystems from "../data/sourceSystems";
@@ -13,16 +12,36 @@ function Upload() {
     const [source, setSource] = useState("");
     const [priority, setPriority] = useState("");
     const [file, setFile] = useState(null);
-
+    const [fileError, setFileError] = useState("");
+   
+    const fileInputRef = useRef(null);
+    
     function handleCategoryChange(e) {
         setCategory(e.target.value);
         setType("");
     }
 
     function handleFileChange(e) {
-        if (e.target.files.length > 0) {
-            setFile(e.target.files[0]);
+        const selectedFile = e.target.files?.[0];
+
+        if (!selectedFile) {
+            return;
         }
+
+        setFile(selectedFile);
+    } 
+
+    function handleRemoveFile() {
+        setFile(null);
+        setFileError("");
+
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    }
+
+    function handleReplaceFile() {
+        fileInputRef.current?.click();
     }
 
     return (
@@ -128,24 +147,23 @@ function Upload() {
 
                 </div>
 
-                {/* File */}
+                {/* File Upload */}
 
                 <div className="form-group">
-                    
-                    <label>Upload PDF</label>
+                    <label htmlFor="pdf-file">Upload PDF</label>
 
                     <input
+                        id="pdf-file"
                         type="file"
-                        accept=".pdf"
+                        accept=".pdf,application/pdf"
                         onChange={handleFileChange}
                     />
 
                     {file && (
                         <p className="selected-file">
-                            {file.name}
+                            Selected file: {file.name}
                         </p>
                     )}
-
                 </div>
 
                 <div className="form-group">
