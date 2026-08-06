@@ -6,7 +6,35 @@ import priorities from "../data/priorities";
 
 import "./Upload.css";
 import processMappings from "../data/processMappings";
-import { createRecord } from "../api/api";
+import {createRecord,processDocument,} from "../api/api";
+
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            if (typeof reader.result !== "string") {
+                reject(new Error("Unable to read the selected PDF."));
+                return;
+            }
+
+            const base64Content = reader.result.split(",")[1];
+
+            if (!base64Content) {
+                reject(new Error("Unable to convert the PDF to Base64."));
+                return;
+            }
+
+            resolve(base64Content);
+        };
+
+        reader.onerror = () => {
+            reject(new Error("Failed to read the selected PDF."));
+        };
+
+        reader.readAsDataURL(file);
+    });
+}
 
 function Upload() {
     const [category, setCategory] = useState("");
@@ -18,6 +46,7 @@ function Upload() {
     const [recordId, setRecordId] = useState(null);
     const [isCreatingRecord, setIsCreatingRecord] = useState(false);
     const [recordError, setRecordError] = useState("");
+    const [uploadStatus, setUploadStatus] = useState("");
 
     const [fileError, setFileError] = useState("");
    
@@ -38,54 +67,88 @@ function Upload() {
         setFile(selectedFile);
     } 
 
-    async function handleCreateRecord() {
-        setRecordError("");
-        setRecordId(null);
+async function handleCreateRecord() {
+    setRecordError("");
+    setRecordId(null);
+    setUploadStatus("");
 
-        if (!category || !type || !file) {
-            setRecordError(
-                "Please select a document category, document type, and PDF file."
+    if (!category) {
+        setRecordError("Please select a document category.");
+        return;
+    }
+
+    if (!type) {
+        setRecordError("Please select a document type.");
+        return;
+    }
+
+    if (!file) {
+        setRecordError("Please select a PDF file.");
+        return;
+    }
+
+    const processDetails = processMappings[category]?.[type];
+
+    if (!processDetails) {
+        setRecordError(
+            "No process mapping was found for the selected document."
+        );
+        return;
+    }
+
+    const recordRequestBody = {
+        name: file.name,
+        process_name: processDetails.processName,
+        process_code: processDetails.processCode,
+    };
+
+    try {
+        setIsCreatingRecord(true);
+        setUploadStatus("Creating record...");
+
+        const createdRecord = await createRecord(recordRequestBody);
+
+        const returnedRecordId = createdRecord?.record?.id;
+
+        if (!returnedRecordId) {
+            throw new Error(
+                "The record was created, but no record ID was returned."
             );
-            return;
         }
 
-        const processDetails = processMappings[category]?.[type];
+        setRecordId(returnedRecordId);
 
-        if (!processDetails) {
-            setRecordError(
-                "No process mapping was found for the selected document."
-            );
-            return;
-        }
+        setUploadStatus("Converting PDF...");
 
-        const requestBody = {
-            name: file.name,
+        const base64Content = await convertFileToBase64(file);
+
+        const processRequestBody = {
             process_name: processDetails.processName,
             process_code: processDetails.processCode,
+            name: file.name,
+            content: base64Content,
+            id: returnedRecordId,
         };
 
-        try {
-            setIsCreatingRecord(true);
+        setUploadStatus("Processing document...");
 
-            const createdRecord = await createRecord(requestBody);
+        await processDocument(processRequestBody);
 
-            const returnedRecordId = createdRecord?.record?.id;
+        setUploadStatus("Completed");
+    } catch (error) {
+        console.error("Document upload failed:", error);
 
-            if (!returnedRecordId) {
-                throw new Error(
-                    "The record was created, but the response did not contain a record ID."
-                );
-            }
+        setRecordError(
+            error instanceof Error
+                ? error.message
+                : "Something went wrong while processing the document."
+        );
 
-            setRecordId(returnedRecordId);
-        } catch (error) {
-            setRecordError(
-                error.message || "Something went wrong while creating the record."
-            );
-        } finally {
-            setIsCreatingRecord(false);
-        }
+        setUploadStatus("");
+    } finally {
+        setIsCreatingRecord(false);
     }
+}
 
     function handleRemoveFile() {
         setFile(null);
@@ -224,15 +287,26 @@ function Upload() {
 
                 <div className="form-group">
                     <label>&nbsp;</label>
-
                     <button
                         type="button"
                         className="upload-btn"
                         onClick={handleCreateRecord}
                         disabled={isCreatingRecord}
                     >
-                        {isCreatingRecord ? "Creating Record..." : "Upload"}
+                        {isCreatingRecord ? uploadStatus : "Upload"}
                     </button>
+                    
+                    {uploadStatus === "Completed" && recordId && (
+                        <p className="record-success">
+                            Document submitted successfully. Record ID: {recordId}
+                        </p>
+                    )}
+
+                    {recordError && (
+                        <p className="record-error">
+                            {recordError}
+                        </p>
+                    )}
                     
                     {recordId && (
                         <p className="record-success">

@@ -1,8 +1,25 @@
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const API = {
+    records: `${BASE_URL}/records`,
     record: `${BASE_URL}/record`,
+    process: `${BASE_URL}/process`,
 };
+
+async function getErrorMessage(response, fallbackMessage) {
+    try {
+        const errorData = await response.json();
+
+        return (
+            errorData.detail ||
+            errorData.message ||
+            errorData.error ||
+            fallbackMessage
+        );
+    } catch {
+        return fallbackMessage;
+    }
+}
 
 export async function createRecord(recordData) {
     const response = await fetch(API.record, {
@@ -14,21 +31,38 @@ export async function createRecord(recordData) {
     });
 
     if (!response.ok) {
-        let errorMessage = "Unable to create the record.";
-
-        try {
-            const errorData = await response.json();
-
-            errorMessage =
-                errorData.detail ||
-                errorData.message ||
-                errorMessage;
-        } catch {
-            // The backend did not return a JSON error response.
-        }
+        const errorMessage = await getErrorMessage(
+            response,
+            "Unable to create the record."
+        );
 
         throw new Error(errorMessage);
     }
 
     return response.json();
+}
+
+export async function processDocument(processData) {
+    const response = await fetch(API.process, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(processData),
+    });
+
+    if (!response.ok) {
+        const errorMessage = await getErrorMessage(
+            response,
+            "Document processing failed."
+        );
+
+        throw new Error(errorMessage);
+    }
+
+    /*
+     * The /process response is not required at this stage.
+     * We only need to know whether the request succeeded.
+     */
+    return true;
 }
