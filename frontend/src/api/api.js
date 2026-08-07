@@ -60,9 +60,31 @@ export async function processDocument(processData) {
         throw new Error(errorMessage);
     }
 
-    /*
-     * The /process response is not required at this stage.
-     * We only need to know whether the request succeeded.
-     */
-    return true;
+    const data = await response.json();
+
+    return data;
+}
+
+export async function updateRecord(recordId, updateData) {
+    const response = await fetch(
+        `${API.record}/${recordId}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updateData),
+        }
+    );
+
+    if (!response.ok) {
+        const errorMessage = await getErrorMessage(
+            response,
+            "Unable to update the record."
+        );
+
+        throw new Error(errorMessage);
+    }
+
+    return response.json();
 }

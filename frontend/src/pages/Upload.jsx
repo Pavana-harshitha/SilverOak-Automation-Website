@@ -6,7 +6,7 @@ import priorities from "../data/priorities";
 
 import "./Upload.css";
 import processMappings from "../data/processMappings";
-import {createRecord,processDocument,} from "../api/api";
+import {createRecord,processDocument,updateRecord,} from "../api/api";
 
 function convertFileToBase64(file) {
     return new Promise((resolve, reject) => {
@@ -102,13 +102,23 @@ async function handleCreateRecord() {
         process_code: processDetails.processCode,
     };
 
+    let returnedRecordId = null;
+
     try {
         setIsCreatingRecord(true);
+
+        // ---------------------------
+        // STEP 3 - Create Record
+        // ---------------------------
+
         setUploadStatus("Creating record...");
 
-        const createdRecord = await createRecord(recordRequestBody);
+        const createdRecord = await createRecord(
+            recordRequestBody
+        );
 
-        const returnedRecordId = createdRecord?.record?.id;
+        returnedRecordId =
+            createdRecord?.record?.id;
 
         if (!returnedRecordId) {
             throw new Error(
@@ -118,25 +128,98 @@ async function handleCreateRecord() {
 
         setRecordId(returnedRecordId);
 
+        // ---------------------------
+        // STEP 4 - Convert PDF
+        // ---------------------------
+
         setUploadStatus("Converting PDF...");
 
-        const base64Content = await convertFileToBase64(file);
+        const base64Content =
+            await convertFileToBase64(file);
 
         const processRequestBody = {
-            process_name: processDetails.processName,
-            process_code: processDetails.processCode,
+            process_name:
+                processDetails.processName,
+
+            process_code:
+                processDetails.processCode,
+
             name: file.name,
+
             content: base64Content,
+
             id: returnedRecordId,
         };
 
-        setUploadStatus("Processing document...");
+        // ---------------------------
+        // STEP 4 - Process Document
+        // ---------------------------
 
-        await processDocument(processRequestBody);
+        setUploadStatus(
+            "Processing document..."
+        );
 
-        setUploadStatus("Completed");
+        try {
+            const processResponse =
+                await processDocument(
+                    processRequestBody
+                );
+
+            // ---------------------------
+            // STEP 5 - SUCCESS UPDATE
+            // ---------------------------
+
+            setUploadStatus(
+                "Updating record..."
+            );
+
+            await updateRecord(
+                returnedRecordId,
+                {
+                    status: "Success",
+                    response: processResponse,
+                    error: null,
+                }
+            );
+
+            setUploadStatus("Completed");
+
+        } catch (processError) {
+
+            // ---------------------------
+            // STEP 5 - FAILURE UPDATE
+            // ---------------------------
+
+            const errorMessage =
+                processError instanceof Error
+                    ? processError.message
+                    : "Document processing failed.";
+
+            try {
+                await updateRecord(
+                    returnedRecordId,
+                    {
+                        status: "Failure",
+                        response: null,
+                        error: errorMessage,
+                    }
+                );
+            } catch (updateError) {
+                console.error(
+                    "Failed to update record status:",
+                    updateError
+                );
+            }
+
+            throw processError;
+        }
+
     } catch (error) {
-        console.error("Document upload failed:", error);
+
+        console.error(
+            "Document upload failed:",
+            error
+        );
 
         setRecordError(
             error instanceof Error
@@ -145,8 +228,11 @@ async function handleCreateRecord() {
         );
 
         setUploadStatus("");
+
     } finally {
+
         setIsCreatingRecord(false);
+
     }
 }
 
