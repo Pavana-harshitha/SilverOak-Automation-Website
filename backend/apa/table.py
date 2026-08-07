@@ -30,7 +30,7 @@ def get_records():
     response = supabase_client.table("autopay_bank_card_forms").select("*").order("created_at",desc=True).execute()
     return response.data
 
-@router.get('/records/(record_id)')
+@router.get('/records/{record_id}')
 def get_record(record_id):
     response = supabase_client.table("autopay_bank_card_forms").select("*").eq("id",record_id).execute()
     return response.data[0]
@@ -53,7 +53,7 @@ def create_record(request:CreateRequest):
         raise HTTPException(status_code=500,detail=str(e))
     
 
-@router.patch('/record/(record_id)')
+@router.patch('/record/{record_id}')
 def update_record(record_id,request:UpdateRequest):
     try:
         record = {
